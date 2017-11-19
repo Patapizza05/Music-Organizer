@@ -1,6 +1,7 @@
 package fr.personal.patapizza.music.organizer.service;
 
 import fr.personal.patapizza.music.organizer.entities.Song;
+import fr.personal.patapizza.music.organizer.log.MusicLogger;
 import fr.personal.patapizza.music.organizer.option.SongFormatEnum;
 
 import java.io.File;
@@ -12,9 +13,11 @@ import java.util.stream.Collectors;
 public class MusicScannerService {
 
     private final List<SongFormatEnum> formats;
+    private final MusicLogger musicLogger;
 
-    public MusicScannerService(List<SongFormatEnum> formats) {
+    public MusicScannerService(List<SongFormatEnum> formats, MusicLogger musicLogger) {
         this.formats = formats;
+        this.musicLogger = musicLogger;
     }
 
     public List<Song> getSongs(File folder, boolean recursive) {
@@ -58,8 +61,7 @@ public class MusicScannerService {
             return new Song(file.getPath());
         }
         catch(Exception ex) {
-            System.out.println(String.format("[fr.personal.patapizza.music.organizer.service.MusicScannerService][%s n'est pas un fichier audio]", file.getPath()));
-            ex.printStackTrace();
+            musicLogger.error(ex,"MusicScannerService", "toSong", "%s n'est pas un fichier audio", file.getPath());
         }
         return null;
     }

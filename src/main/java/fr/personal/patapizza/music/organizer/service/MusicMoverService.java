@@ -1,10 +1,9 @@
 package fr.personal.patapizza.music.organizer.service;
 
+import fr.personal.patapizza.music.organizer.entities.Song;
 import fr.personal.patapizza.music.organizer.log.MusicLogger;
 import fr.personal.patapizza.music.organizer.option.FilenameFormat;
 import fr.personal.patapizza.music.organizer.util.MoUtils;
-import fr.personal.patapizza.music.organizer.entities.Song;
-import fr.personal.patapizza.music.organizer.option.TagFormatEnum;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,14 +15,11 @@ import java.util.List;
 public class MusicMoverService {
 
     private final FilenameFormat destinationFormat;
-    private MusicLogger musicLogger = new MusicLogger();
+    private MusicLogger musicLogger;
 
-    public MusicMoverService(TagFormatEnum... tags) {
-        this(new FilenameFormat(tags));
-    }
-
-    public MusicMoverService(FilenameFormat destinationFormat) {
+    public MusicMoverService(FilenameFormat destinationFormat, MusicLogger musicLogger) {
         this.destinationFormat = destinationFormat;
+        this.musicLogger = musicLogger;
     }
 
     public void moveSongs(List<Song> songs, File destinationFolder) {

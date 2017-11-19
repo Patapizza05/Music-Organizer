@@ -16,17 +16,19 @@ public class MusicTagCheckerController {
     private boolean recursive;
     private List<TagEnum> necessaryTags;
     private MusicScannerService musicScannerService;
-    private MusicLogger musicLogger = new MusicLogger();
+    private MusicLogger musicLogger;
 
-    public MusicTagCheckerController(File musicFolder, boolean recursive, List<TagEnum> necessaryTags, MusicScannerService musicScannerService) {
+    public MusicTagCheckerController(File musicFolder, boolean recursive, List<TagEnum> necessaryTags, MusicScannerService musicScannerService, MusicLogger musicLogger) {
         this.musicFolder = musicFolder;
         this.recursive = recursive;
         this.necessaryTags = necessaryTags;
         this.musicScannerService = musicScannerService;
+        this.musicLogger = musicLogger;
     }
 
     public void checkTags() {
         checkTags(musicFolder);
+        musicLogger.logResult();
     }
 
     private void checkTags(File folder) {
@@ -34,16 +36,16 @@ public class MusicTagCheckerController {
 
         if (songs != null && !songs.isEmpty()) {
             if (songs.stream().allMatch(s -> s.isFilled(necessaryTags))) {
-                if (createTagCheckedFile(folder)) {
+                if (deleteTagIncorrectFile(folder)) {
                     musicLogger.success("MusicTagCheckerController", "checkTags", "Fichiers audios taggés correctement - dossier %s", folder.getPath());
                 } else {
-                    musicLogger.error(null, "MusicTagCheckerController", "checkTags", "Fichiers audios taggés correctement - Erreur lors de la création du fichier - dossier %s", folder.getPath());
+                    musicLogger.error(null, "MusicTagCheckerController", "checkTags", "Fichiers audios taggés correctement - Erreur lors de la suppression du fichier - dossier %s", folder.getPath());
                 }
             } else {
-                if (deleteTagCheckedFile(folder)) {
+                if (createTagIncorrectFile(folder)) {
                     musicLogger.error(null, "MusicTagCheckerController", "checkTags", "Tags incorrects - dossier %s", folder.getPath());
                 } else {
-                    musicLogger.error(null, "MusicTagCheckerController", "checkTags", "Tags incorrects - Erreur lors de la suppression du fichier - dossier %s", folder.getPath());
+                    musicLogger.error(null, "MusicTagCheckerController", "checkTags", "Tags incorrects - Erreur lors de la création du fichier - dossier %s", folder.getPath());
                 }
             }
         }
@@ -62,15 +64,7 @@ public class MusicTagCheckerController {
         }
     }
 
-    private boolean createTagCheckedFile(File folder) {
-        File f = buildTagCheckedFile(folder);
-        try {
-            return f.exists() || f.createNewFile();
-        } catch (Exception ex) {
-            return false;
-        }
-    }
-
+    @Deprecated
     private boolean deleteTagCheckedFile(File folder) {
         File f = buildTagCheckedFile(folder);
         try {
@@ -80,8 +74,38 @@ public class MusicTagCheckerController {
         }
     }
 
+    private boolean createTagIncorrectFile(File folder) {
+        File f = buildTagIncorrectFile(folder);
+        try {
+            if (f.exists() || f.createNewFile()) {
+                f.setReadable(true, false);
+                f.setWritable(true, false);
+                return true;
+            }
+        } catch (Exception ex) {
+            return false;
+        }
+        return false;
+    }
+
+    private boolean deleteTagIncorrectFile(File folder) {
+        File f = buildTagIncorrectFile(folder);
+        try {
+            return !f.exists() || f.delete();
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    @Deprecated
     private File buildTagCheckedFile(File folder) {
         String filePath = MoUtils.buildAbsoluteFileName(folder.getPath(), Settings.MusicTagChecker.FILE_TAG_CHECKED);
+        // Use relative path for Unix systems
+        return new File(filePath);
+    }
+
+    private File buildTagIncorrectFile(File folder) {
+        String filePath = MoUtils.buildAbsoluteFileName(folder.getPath(), Settings.MusicTagChecker.FILE_TAG_INCORRECT);
         // Use relative path for Unix systems
         return new File(filePath);
     }

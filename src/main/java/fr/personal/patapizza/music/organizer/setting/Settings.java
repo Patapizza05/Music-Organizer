@@ -50,6 +50,13 @@ public class Settings {
         public static final boolean RECURSIVE = true;
 
         public static final String FILE_TAG_CHECKED = ".mo-tag-checked";
+        public static final String FILE_TAG_INCORRECT = "mo-tag-incorrect";
+    }
+
+    public static class MusicLogger {
+        public static boolean VERBOSE_SUCCESS = false;
+        public static boolean VERBOSE_WARNING = false;
+        public static boolean VERBOSE_ERROR = true;
     }
 
 
