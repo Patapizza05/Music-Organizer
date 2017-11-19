@@ -4,24 +4,20 @@ import fr.personal.patapizza.music.organizer.entities.Song;
 import fr.personal.patapizza.music.organizer.option.SongFormatEnum;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class MusicScanner {
+public class MusicScannerService {
 
-    private final File musicFolder;
     private final List<SongFormatEnum> formats;
 
-    public MusicScanner(File musicFolder, List<SongFormatEnum> formats) {
-        this.musicFolder = musicFolder;
+    public MusicScannerService(List<SongFormatEnum> formats) {
         this.formats = formats;
     }
 
-    public List<Song> getSongs(boolean recursive) {
-        return getSongs(musicFolder, recursive);
-    }
-
-    private List<Song> getSongs(File folder, boolean recursive) {
+    public List<Song> getSongs(File folder, boolean recursive) {
         List<Song> songs = new LinkedList<>();
         File[] items = folder.listFiles();
         if (items != null) {
@@ -43,6 +39,16 @@ public class MusicScanner {
         return songs;
     }
 
+    public List<File> getSubFolders(File folder) {
+        if (folder != null) {
+            File[] items = folder.listFiles();
+            if (items != null) {
+                return Arrays.stream(items).filter(File::isDirectory).collect(Collectors.toList());
+            }
+        }
+        return null;
+    }
+
     private boolean isMusicFile(File file) {
         return file.isFile() && formats.stream().anyMatch(format -> file.getPath().endsWith(format.getExtension()));
     }
@@ -52,7 +58,7 @@ public class MusicScanner {
             return new Song(file.getPath());
         }
         catch(Exception ex) {
-            System.out.println(String.format("[fr.personal.patapizza.music.organizer.service.MusicScanner][%s n'est pas un fichier audio]", file.getPath()));
+            System.out.println(String.format("[fr.personal.patapizza.music.organizer.service.MusicScannerService][%s n'est pas un fichier audio]", file.getPath()));
             ex.printStackTrace();
         }
         return null;

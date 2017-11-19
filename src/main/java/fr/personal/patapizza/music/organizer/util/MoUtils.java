@@ -1,8 +1,8 @@
 package fr.personal.patapizza.music.organizer.util;
 
-public class MoUtils {
+import fr.personal.patapizza.music.organizer.setting.Settings;
 
-    public static final String FILE_DELIMITER = "/";
+public class MoUtils {
 
     public static boolean isEmpty(String album) {
         return !isNotEmpty(album);
@@ -21,8 +21,8 @@ public class MoUtils {
     }
 
     public static String addEndDelimiter(String folder) {
-        if (!folder.endsWith("/") && !folder.endsWith("\\")) {
-            folder += FILE_DELIMITER;
+        if (!folder.endsWith("/") && !folder.endsWith("\\") && !folder.endsWith(Settings.FILE_SEPARATOR)) {
+            folder += Settings.FILE_SEPARATOR;
         }
         return folder;
     }

@@ -9,21 +9,21 @@ import java.util.List;
 
 public class FilenameFormat {
 
-    private static final String FORBIDDEN_CHARACTERS_REGEX = "[\\/:*?\"<>|]";
+    private static final String FORBIDDEN_CHARACTERS_REGEX = "[\\\\/:*?\"<>|]";
 
-    private List<TagEnum> tags;
+    private List<TagFormatEnum> tags;
 
-    public FilenameFormat(TagEnum... tags) {
+    public FilenameFormat(TagFormatEnum... tags) {
         this.tags = tags != null ? Arrays.asList(tags) : new ArrayList<>(0);
     }
 
-    public List<TagEnum> getTags() {
+    public List<TagFormatEnum> getTags() {
         return tags;
     }
 
     public String buildDestinationFolderName(Song song) {
         StringBuilder builder = new StringBuilder();
-        for(TagEnum tag : tags) {
+        for(TagFormatEnum tag : tags) {
             String folder = tag.getAttributeFrom(song);
             if (MoUtils.isNotEmpty(folder)) {
                 folder = folder.replaceAll(FORBIDDEN_CHARACTERS_REGEX, "_");

@@ -1,9 +1,10 @@
 package fr.personal.patapizza.music.organizer.service;
 
+import fr.personal.patapizza.music.organizer.log.MusicLogger;
 import fr.personal.patapizza.music.organizer.option.FilenameFormat;
 import fr.personal.patapizza.music.organizer.util.MoUtils;
 import fr.personal.patapizza.music.organizer.entities.Song;
-import fr.personal.patapizza.music.organizer.option.TagEnum;
+import fr.personal.patapizza.music.organizer.option.TagFormatEnum;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,15 +13,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class MusicMover {
+public class MusicMoverService {
 
     private final FilenameFormat destinationFormat;
+    private MusicLogger musicLogger = new MusicLogger();
 
-    public MusicMover(TagEnum... tags) {
+    public MusicMoverService(TagFormatEnum... tags) {
         this(new FilenameFormat(tags));
     }
 
-    public MusicMover(FilenameFormat destinationFormat) {
+    public MusicMoverService(FilenameFormat destinationFormat) {
         this.destinationFormat = destinationFormat;
     }
 
@@ -38,10 +40,10 @@ public class MusicMover {
                 createFolders(destFolder);
                 String destFile = MoUtils.buildAbsoluteFileName(destFolder, song.getFilenameWithoutFolder());
                 move(song, destFile);
+                musicLogger.success("MusicMoverService", "moveSong", "%s", song.getFilename());
             }
         } catch(Exception ex) {
-            ex.printStackTrace();
-            System.out.println("[fr.personal.patapizza.music.organizer.service.MusicMover][Erreur pour la chanson : " + (song != null ? song.getFilename() : null) + "]");
+            musicLogger.error(ex, "MusicMoverService", "moveSong", "%s", song != null ? song.getFilename() : null);
         }
     }
 

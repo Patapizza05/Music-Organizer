@@ -2,37 +2,55 @@ package fr.personal.patapizza.music.organizer.setting;
 
 import fr.personal.patapizza.music.organizer.option.SongFormatEnum;
 import fr.personal.patapizza.music.organizer.option.TagEnum;
+import fr.personal.patapizza.music.organizer.option.TagFormatEnum;
+
+import java.io.File;
 
 public class Settings {
 
-    public static final String MUSIC_PATH = "C:/Users/USERNAME/Music";
+    public static final String MUSIC_PATH = SensitiveSettings.MUSIC_PATH;
 
-    /**
-     * Destination filename pattern
-     * For example :
-     * Source :         [MUSIC_PATH]/example.mp3
-     * Destination :    [MUSIC_PATH]/[Artist]/[Album]/example.mp3
-     */
-    public static final TagEnum[] FILENAME_PATTERN_TAGS = new TagEnum[]
-            {
-                    TagEnum.ARTIST,
-                    TagEnum.ALBUM_YEAR
-            };
-
+    public static final String FILE_SEPARATOR = File.separator;
     /**
      * Allowed song extensions
      */
     public static final SongFormatEnum[] ALLOWED_AUDIO_FORMATS = new SongFormatEnum[]
             {
                     SongFormatEnum.MP3,
-                    SongFormatEnum.M4A,
-                    SongFormatEnum.FLAC,
-                    SongFormatEnum.WAV
             };
 
-    /*
-     * Warning : True : not tested
-     */
-    public static final boolean RECURSIVE = false;
+    public static class MusicMover {
+        /**
+         * Destination filename pattern
+         * For example :
+         * Source :         [MUSIC_PATH]/example.mp3
+         * Destination :    [MUSIC_PATH]/[Artist]/[Album]/example.mp3
+         */
+        public static final TagFormatEnum[] FILENAME_PATTERN_TAGS = new TagFormatEnum[]
+                {
+                        TagFormatEnum.ARTIST,
+                        TagFormatEnum.ALBUM_YEAR
+                };
+
+        /**
+         * Warning : True : not tested
+         */
+        public static final boolean RECURSIVE = false;
+    }
+
+    public static class MusicTagChecker {
+        /**
+         * Tags needed to pass the OK Test
+         */
+        public static final TagEnum[] NECESSARY_TAGS = new TagEnum[]{TagEnum.ID3V2, TagEnum.ARTIST, TagEnum.ALBUM, TagEnum.TITLE, TagEnum.ALBUM_IMAGE};
+
+        /**
+         * Test the sub-folders too
+         */
+        public static final boolean RECURSIVE = true;
+
+        public static final String FILE_TAG_CHECKED = ".mo-tag-checked";
+    }
+
 
 }
